@@ -9,12 +9,12 @@
             return {
                 count:0,
                 messages: [],
-                add: function (m) {
+                add: function (c, m) {
                     if (this.messages.length > 10) {
                         this.messages.shift();
                     }
                     this.count++;
-                    this.messages.push({ seq: this.count, content: m });
+                    this.messages.push({ seq: this.count, caption:c, content: m });
                 },
                 clear: function () {
                     this.messages = [];
@@ -23,8 +23,20 @@
         }).factory('RequestInterceptor', ['$q', 'MessageService', function ($q, MessageService) {
             return {
                 'request': function (config) {
-                    MessageService.add(config);
-                    return config;
+                    MessageService.add('request', config);
+                    return config || $q.when(config);
+                },
+                'requestError': function (rejection) {
+                    MessageService.add('requestError', rejection);
+                    return $q.reject(rejection);
+                },
+                'response': function (response) {
+                    MessageService.add('response', response);
+                    return response || $q.when(response);
+                },
+                'responseError': function (rejection) {
+                    MessageService.add('responseError', rejection);
+                    return $q.reject(rejection);
                 }
             };
         }]).config(['$httpProvider', function ($httpProvider) {
@@ -33,7 +45,7 @@
             $scope.messages = MessageService.messages;
 
             $scope.execRequestInterceptorSample = function () {
-                $http.get('http://www.test.com')
+                $http.get('http://www.baidu.com')
                     .success(function () {
                     })
                     .error(function () {
@@ -70,11 +82,14 @@
         .message-panel .item{
             font-size:12px;
             line-height:3em;
-            border-bottom:1px dashed #0094ff;
+            border-top:1px dashed #0094ff;
         }
 
-        .message-panel .item:last-child{
-            border-bottom:none;
+        .message-panel .item .caption{
+            font-weight:bold;
+            line-height:1em;
+            padding:2px 5px;
+            background-color:cornflowerblue;
         }
     </style>
 </head>
@@ -89,6 +104,7 @@
             <div>
                 <ul>
                     <li class="item" ng-repeat="m in messages">
+                        <div class="caption">{{m.caption}}</div>
                         <div><span>{{m.seq}}|</span><span>{{m.content | json}}</span></div>
                     </li>
                 </ul>
