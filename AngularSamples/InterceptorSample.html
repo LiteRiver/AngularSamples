@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Interceptor Sample</title>
+    <script src="Scripts/angular.js"></script>
+    <script>
+        angular.module('InterceptorSample', []).factory('MessageService', function () {
+            return {
+                count:0,
+                messages: [],
+                add: function (m) {
+                    if (this.messages.length > 10) {
+                        this.messages.shift();
+                    }
+                    this.count++;
+                    this.messages.push({ seq: this.count, content: m });
+                },
+                clear: function () {
+                    this.messages = [];
+                }
+            };
+        }).factory('RequestInterceptor', ['$q', 'MessageService', function ($q, MessageService) {
+            return {
+                'request': function (config) {
+                    MessageService.add(config);
+                    return config;
+                }
+            };
+        }]).config(['$httpProvider', function ($httpProvider) {
+            $httpProvider.interceptors.push('RequestInterceptor');
+        }]).controller('SampleController', ['$scope', '$http', 'MessageService', function ($scope, $http, MessageService) {
+            $scope.messages = MessageService.messages;
+
+            $scope.execRequestInterceptorSample = function () {
+                $http.get('http://www.test.com')
+                    .success(function () {
+                    })
+                    .error(function () {
+                    });
+            };
+        }]);
+    </script>
+    <style>
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .message-panel {
+            border: 1px solid #0094ff;
+        }
+
+        .message-panel h4{            
+            margin:0;
+            padding:5px;
+            color:#fff;
+            background-color:#0094ff;
+            border-bottom:1px solid #0094ff            
+        }
+
+        .message-panel > div{
+            min-height:50px;
+        }
+
+        .message-panel ul{
+            padding:5px;
+            list-style-type:none;
+        }
+
+        .message-panel .item{
+            font-size:12px;
+            line-height:3em;
+            border-bottom:1px dashed #0094ff;
+        }
+
+        .message-panel .item:last-child{
+            border-bottom:none;
+        }
+    </style>
+</head>
+<body ng-app="InterceptorSample">
+    <div ng-controller="SampleController">
+        <div class="section">
+            <button type="button" ng-click="execRequestInterceptorSample()">Execute Request Interceptor Sample</button>
+        </div>
+
+        <div class="message-panel">
+            <h4>消息面板</h4>
+            <div>
+                <ul>
+                    <li class="item" ng-repeat="m in messages">
+                        <div><span>{{m.seq}}|</span><span>{{m.content | json}}</span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
