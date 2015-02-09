@@ -1,0 +1,9 @@
+﻿<div class="thumbnail-nav">
+    <div class="previous" ng-click="previous($event)"><<</div>
+    <div class="content">
+        <div class="item" ng-repeat="thumb in currentPage" ng-style="getItemStyle($index)">
+            <img ng-src="{{thumb}}" ng-click="selectItem($index)" ng-class="{active: $index == selectedIndex}" />         
+        </div>
+    </div>
+    <div class="next" ng-click="next($event)">>></div>
+</div>

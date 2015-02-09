@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hello Directive</title>
+    <script src="Scripts/angular.js"></script>
+    <script>
+        angular.module('HelloDirective', []).directive('rvHelloWorld', function () {
+            return {
+                restrict: 'AE', // 指定了指令在dom中的使用方式(A->attribute; E->element; C->class; M->comment)
+                replace: true, // 指令内容以replace还是append方式展现
+                template: '<h1>Hello World!!!</h1>' // 指定在指令中使用的模板，可以是模板的url， 也可以是模板内容字符串
+            };
+        }).controller('ColoredHelloController', function ($scope) {
+            $scope.reset = function () {
+                alert('reset');
+            };
+
+        }).directive('rvColoredHello', ['$log', function ($log) {
+            return {
+                restrict: 'AE',
+                replace: true,
+                scope: {
+                    color: '=',
+                    reset: '&'
+                },
+                template: '<p style="background-color:{{color}}">Hello World!!!</p>',
+                link: function ($scope, $element, $attrs) {
+                    $log.info($scope);
+
+                    $element.on('click', function () {
+                        $element.css('background-color', 'white');
+                        $scope.$apply(function () {
+                            $scope.color = 'white';
+                        });
+                        $scope.reset();
+                    });
+
+                    $element.on('mouseover', function () {
+                        $element.css('cursor', 'pointer');
+                    });
+
+                    $element.on('$destroy', function () {
+                        $element.off('click');
+                        $element.off('mouseover');
+                    });
+                }
+            };
+        }]);
+    </script>
+</head>
+<body ng-app="HelloDirective">
+    <section>
+        <rv-hello-world />
+    </section>
+    <section>
+        <rv:hello:world />
+    </section>
+    <section>
+        <div rv-hello-world />
+    </section>
+    <section>
+        <div rv:hello:world />
+    </section>
+    <section>
+        <div data-rv-hello-world />
+    </section>
+    <section>
+        <div x-rv-hello-world />
+    </section>
+    <hr/>
+    <section ng-controller="ColoredHelloController">
+        <h1>Colored Hello</h1>
+        <input type="text" ng-model="color" placeholder="enter a color" />
+        <p>parent color is {{color}}</p>
+        <rv-colored-hello color="color" reset="reset()" />
+    </section>
+
+</body>
+</html>

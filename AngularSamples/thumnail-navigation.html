@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script src="Scripts/angular.js"></script>
+    <script src="Scripts/angular-animate.js"></script>
+    <script src="app/scripts/thumbnail-navigation.js"></script>
+    <script>
+        angular.module('app', ['rv.thumbnail-navigation']).controller('MainController', function ($scope, $window) {
+            $scope.thumnails = [
+                'http://img5.imgtn.bdimg.com/it/u=3292851460,915918973&fm=21&gp=0.jpg',
+                'http://img2.imgtn.bdimg.com/it/u=1757230159,3431014139&fm=21&gp=0.jpg',
+                'http://img5.imgtn.bdimg.com/it/u=4201057586,2020342447&fm=21&gp=0.jpg',
+                'http://img1.imgtn.bdimg.com/it/u=4010670789,4188088586&fm=23&gp=0.jpg',
+                'http://img4.imgtn.bdimg.com/it/u=3297651340,2425154986&fm=21&gp=0.jpg',
+                'http://img5.imgtn.bdimg.com/it/u=1709342935,637012030&fm=21&gp=0.jpg',
+                'http://img3.imgtn.bdimg.com/it/u=2040031851,2326496368&fm=21&gp=0.jpg',
+                'http://img4.imgtn.bdimg.com/it/u=409224995,3391603703&fm=21&gp=0.jpg',
+                'http://img2.imgtn.bdimg.com/it/u=767043658,3733567154&fm=21&gp=0.jpg',
+                'http://img1.imgtn.bdimg.com/it/u=1037362578,1226681905&fm=21&gp=0.jpg',
+                'http://img0.imgtn.bdimg.com/it/u=3012724571,2675678021&fm=21&gp=0.jpg'
+            ];
+
+            $scope.selected = function (index) {
+                $window.alert('selected ' + index);
+            };
+        });
+    </script>
+    <style>
+        .thumbnail-nav {
+            position: relative;
+            margin: 15px auto;
+            border: 1px solid #808080;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+            .thumbnail-nav .previous {
+                cursor: pointer;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 25px;
+                height: 100%;
+                border-right: 1px solid #808080;
+            }
+
+            .thumbnail-nav .next {
+                cursor: pointer;
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 25px;
+                height: 100%;
+                border-left: 1px solid #808080;
+            }
+
+            .thumbnail-nav .content {
+                margin: 0 30px;
+                overflow: hidden;
+                min-height: 10px;
+            }
+
+                .thumbnail-nav .content:after {
+                    display: block;
+                    zoom: 1;
+                    content: ".";
+                    visibility: hidden;
+                    clear: both;
+                    height: 0;
+                }
+
+            .thumbnail-nav .item {
+                float: left;
+            }
+
+                .thumbnail-nav .item.ng-enter,
+                .thumbnail-nav .item.ng-leave,
+                .thumbnail-nav .item.ng-move {
+                    -moz-transition: .4s linear all;
+                    -o-transition: .4s linear all;
+                    -webkit-transition: .4s linear all;
+                    transition: .4s linear all;
+                }
+
+                .thumbnail-nav .item.ng-enter,
+                .thumbnail-nav .item.ng-move {
+                    opacity: 0;
+                }
+
+                    .thumbnail-nav .item.ng-move.ng-move-active,
+                    .thumbnail-nav .item.ng-enter.ng-enter-active {
+                        opacity: 1;
+                    }
+
+                .thumbnail-nav .item.ng-leave {
+                    opacity: 1;
+                    overflow: hidden;
+                }
+
+                    .thumbnail-nav .item.ng-leave.ng-leave-active {
+                        opacity: 0;
+                        display: none;
+                    }
+
+            .thumbnail-nav img {
+                cursor: pointer;
+                display: block;
+                width: 100%;
+                height: 100%;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                -moz-transition: all linear .5s;
+                -o-transition: all linear .5s;
+                -webkit-transition: all linear .5s;
+                transition: all linear .5s;
+            }
+
+                .thumbnail-nav img:hover {
+                    box-shadow: rgba(128, 128, 128, .5) 2px 2px;
+                }
+
+                .thumbnail-nav img.active {
+                    border: 1px solid #0094ff;
+                }
+    </style>
+</head>
+<body ng-app="app">
+    <section ng-controller="MainController">
+        <rv-thumb-nav thumbnails="thumnails" items-per-page="5" gap="6" select="selected(index)"></rv-thumb-nav>
+    </section>
+</body>
+</html>
